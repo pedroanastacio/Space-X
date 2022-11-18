@@ -1,11 +1,13 @@
-import { prop, getModelForClass } from '@typegoose/typegoose'
+import mongoose from 'mongoose'
 
-export class Rocket {
-    @prop()
-    public _id!: string
-
-    @prop()
-    public name!: string
+export interface Rocket {
+    _id: string
+    name: string
 }
 
-export const RocketModel = getModelForClass(Rocket)
+const RocketSchema = new mongoose.Schema({
+    _id: { type: String, required: true },
+    name: { type: String, required: true }
+})
+
+export const RocketModel = mongoose.model('Rocket', RocketSchema)

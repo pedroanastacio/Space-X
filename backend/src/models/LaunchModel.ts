@@ -1,27 +1,24 @@
-import { prop, getModelForClass, Ref } from '@typegoose/typegoose'
-import { Rocket } from './RocketModel';
+import mongoose, { Schema } from 'mongoose'
+import { Rocket } from './RocketModel'
 
-export class Launch {
-    @prop()
-    public name!: string
-
-    @prop()
-    public flight_number!: number
-
-    @prop()
-    public patch!: string
-
-    @prop()
-    public date!: string
-
-    @prop({ ref: () => Rocket, type: () => String })
-    public rocket!: Ref<Rocket, string>
-
-    @prop()
-    public success!: string
-
-    @prop()
-    public webcast!: string
+export interface Launch {
+    name: string
+    flight_number: number
+    patch: string
+    date: string
+    rocket: Rocket | string
+    success: string
+    webcast: string
 }
 
-export const LaunchModel = getModelForClass(Launch)
+const LaunchSchema = new mongoose.Schema({
+    name: { type: String, required: true },
+    flight_number: { type: Number, required: true },
+    patch: { type: String },
+    date: { type: String, required: true },
+    rocket: { type: Schema.Types.ObjectId, ref: 'Rocket' },
+    sucess: { type: Boolean },
+    webcast: { type: String }
+})
+
+export const LaunchModel = mongoose.model('Launch', LaunchSchema)
