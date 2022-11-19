@@ -56,7 +56,7 @@ export class PopulateDatabase {
                     patch: launch.links.patch.small,
                     date: launch.date_utc,
                     rocket: rocket,
-                    success: launch.success,
+                    result: launch.success ? 'SUCESSO' : launch.success === false ? 'FALHA' : 'INDETERMINADO',
                     webcast: launch.links.webcast  
                 })
 

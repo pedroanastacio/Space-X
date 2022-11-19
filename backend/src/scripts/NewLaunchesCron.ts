@@ -68,7 +68,7 @@ export const NewLaunchesJob = new CronJob('0 0 9 * * *', async () => {
                     patch: launch.links.patch.small,
                     date: launch.date_utc,
                     rocket: savedRocket,
-                    success: launch.success,
+                    result: launch.success ? 'SUCESSO' : launch.success === false ? 'FALHA' : 'INDETERMINADO',
                     webcast: launch.links.webcast  
                 })
 
