@@ -86,7 +86,7 @@ export class LaunchController {
 
     }
 
-    async countLaunchesByRocket(req: Request, res: Response) {
+    async countLaunchesPerRocket(req: Request, res: Response) {
         try {
             const result = await LaunchModel.aggregate([
                 {
@@ -100,22 +100,46 @@ export class LaunchController {
                 {
                     $unwind: '$rocket'
                 },
-            ]).sortByCount('rocket')
+                {
+                    $group: {
+                        _id: {
+                            rocket: '$rocket',
+                            result: '$result',
+                        },
+                        count: {
+                            $sum: 1
+                        },
+                    }
+                },
+                {
+                    $group: {
+                        _id: '$_id.rocket',
+                        count: { $sum: '$count' },
+                        result: {
+                            $push: {
+                                _id: '$_id.result',
+                                count: '$count'
+                            }
+                        }
+                    }
+                }
+            ])
 
-            const launchsByRocket = result.map(item => {
+            const launchesPerRocket = result.map(item => {
                 return {
                     rocket: item._id,
                     count: item.count,
+                    result: item.result
                 }
             })
 
-            return res.status(200).json(launchsByRocket)
+            return res.status(200).json({ results: launchesPerRocket })
         } catch {
             return res.status(400).json({ 'message': 'Error message' })
         }
     }
 
-    async countLaunchesByRocketPerYear(req: Request, res: Response) {
+    async countLaunchesPerRocketPerYear(req: Request, res: Response) {
         try {
             const result = await LaunchModel.aggregate([
                 {
@@ -163,21 +187,23 @@ export class LaunchController {
                 },
             ])
 
-            const launchsByRocketPerYear = result.map(item => {
+            const launchsPerRocketPerYear = result.map(item => {
                 return {
                     year: item._id,
                     count: item.count,
                     rockets: item.rockets.map((rocket: any) => {
                         return {
-                            _id: rocket._id._id,
-                            name: rocket._id.name,
+                            rocket: {
+                                _id: rocket._id._id,
+                                name: rocket._id.name,
+                            },
                             count: rocket.count
                         }
                     })
                 }
             })
 
-            return res.status(200).json(launchsByRocketPerYear)
+            return res.status(200).json({ results: launchsPerRocketPerYear })
         } catch {
             return res.status(400).json({ 'message': 'Error message' })
         }

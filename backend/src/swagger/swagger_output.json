@@ -1,0 +1,296 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "version": "1.0.0",
+    "title": "Space X API",
+    "description": "An API developed as a solution to the <b>Fullstack Challenge 🏅 - Space X API</b>. Launch and rocket data obtained from the <b>SpaceX-API</b> is made available."
+  },
+  "servers": [
+    {
+      "url": "http://localhost:3333/"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Default",
+      "description": "Endpoints"
+    },
+    {
+      "name": "Launch",
+      "description": "Endpoints"
+    }
+  ],
+  "paths": {
+    "/": {
+      "get": {
+        "tags": ["Default"],
+        "description": "Endpoint to return a message 'Fullstack Challenge 🏅 - Space X API'.",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Message."
+          }
+        }
+      }
+    },
+    "/launches": {
+      "get": {
+        "tags": ["Launch"],
+        "description": "Endpoint for getting data from launches with paging and search support.",
+        "parameters": [
+          {
+            "name": "search",
+            "in": "query",
+            "description": "Text used in the search",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Page used in pagination",
+            "required": false,
+            "type": "integer"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "Number of launches to be returned",
+            "required": false,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Launches and paging data.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "results": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Launch"
+                      }
+                    },
+                    "totalDocs": {
+                      "type": "integer"
+                    },
+                    "page": {
+                      "type": "integer"
+                    },
+                    "totalPages": {
+                      "type": "integer"
+                    },
+                    "hasNext": {
+                      "type": "boolean"
+                    },
+                    "hasPrev": {
+                      "type": "boolean"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Error message.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }   
+              }
+            }            
+          }
+        }
+      }
+    },
+    "/launches/stats-per-rocket": {
+      "get": {
+        "tags": ["Launch"],
+        "description": "Endpoint to get launches counts per rocket.",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Count of launches per rocket.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "results": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "rocket": {
+                            "type": "object",
+                            "properties": {
+                              "_id": {
+                                "type": "string"
+                              },
+                              "name": {
+                                "type": "string"
+                              }
+                            }
+                          },
+                          "count": {
+                            "type": "integer"
+                          },
+                          "result": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "_id": {
+                                  "type": "string",
+                                  "enum": ["SUCESSO", "FALHA", "INDETERMINADO"]
+                                },
+                                "count": {
+                                  "type": "integer"
+                                }
+                              } 
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            } 
+          },
+          "400": {
+            "description": "Error message.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }   
+              }
+            }             
+          }
+        }
+      }
+    },
+    "/launches/stats-per-rocket-per-year": {
+      "get": {
+        "tags": ["Launch"],
+        "description": "Endpoint to get count of launches per rocket per year.",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Count of launches per rocket per year.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "results": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "year": {
+                            "type": "integer"
+                          },
+                          "count": {
+                            "type": "integer"
+                          },
+                          "rockets": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "rocket": {
+                                  "type": "object",
+                                  "properties": {
+                                    "_id": {
+                                      "type": "string"
+                                    },
+                                    "name": {
+                                      "type": "string"
+                                    }
+                                  }
+                                },
+                                "count": {
+                                  "type": "integer"
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }   
+                }  
+              }    
+            }  
+          },
+          "400": {
+            "description": "Error message.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }   
+              }
+            }          
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Rocket": {
+        "properties": {
+          "_id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          }
+        }
+      },
+      "Launch": {
+        "properties": {
+          "_id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "flight_number": {
+            "type": "integer"
+          },
+          "patch": {
+            "type": "string"
+          },
+          "date": {
+            "type": "string"
+          },
+          "rocket": {
+            "$ref": "#/components/schemas/Rocket"
+          },
+          "result": {
+            "type": "string",
+            "enum": ["SUCESSO", "FALHA", "INDETERMINADO"]
+          },
+          "webcast": {
+            "type": "string"
+          }
+        }
+      },
+      "Error": {
+        "properties": {
+          "message": {
+            "type": "string"
+          }  
+        }
+      }
+    }
+  }
+}
