@@ -12,12 +12,10 @@
   ],
   "tags": [
     {
-      "name": "Default",
-      "description": "Endpoints"
+      "name": "Default"
     },
     {
-      "name": "Launch",
-      "description": "Endpoints"
+      "name": "Launch"
     }
   ],
   "paths": {
