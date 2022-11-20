@@ -9,3 +9,6 @@ const launchController = new LaunchController()
 
 routes.get('/', defaultController.handle)
 routes.get('/launches', launchController.find)
+routes.get('/launches/stats-by-rocket', launchController.countLaunchesByRocket)
+routes.get('/launches/stats-by-rocket-per-year', launchController.countLaunchesByRocketPerYear)
+

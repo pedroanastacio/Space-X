@@ -23,25 +23,43 @@ export class LaunchController {
         }
 
         try {
-            const aggregate = LaunchModel.aggregate([
-                {
-                    $lookup: {
-                        from: 'rockets',
-                        localField: 'rocket',
-                        foreignField: '_id',
-                        as: 'rocket'
+            const aggregate = search ?
+                LaunchModel.aggregate([
+                    {
+                        $lookup: {
+                            from: 'rockets',
+                            localField: 'rocket',
+                            foreignField: '_id',
+                            as: 'rocket'
+                        }
+                    },
+                    {
+                        $unwind: '$rocket'
+                    },
+                    {
+                        $match: {
+                            $or: [
+                                { 'name': { $regex: search, $options: 'i' } },
+                                { 'result': { $regex: search, $options: 'i' } },
+                                { 'rocket.name': { $regex: search, $options: 'i' } }
+                            ]
+                        }
                     }
-                },
-                {
-                    $match: {
-                        $or: [
-                            { 'name': { $regex: search, $options: 'i' } },
-                            { 'result': { $regex: search, $options: 'i' } },
-                            { 'rocket.name': { $regex: search, $options: 'i' } }
-                        ]
-                    }
-                }
-            ])
+                ])
+                :
+                LaunchModel.aggregate([
+                    {
+                        $lookup: {
+                            from: 'rockets',
+                            localField: 'rocket',
+                            foreignField: '_id',
+                            as: 'rocket'
+                        }
+                    },
+                    {
+                        $unwind: '$rocket'
+                    },
+                ])
 
             const result = await LaunchModel.aggregatePaginate(aggregate, options)
 
@@ -66,5 +84,102 @@ export class LaunchController {
             return res.status(400).json({ 'message': 'Error message' })
         }
 
+    }
+
+    async countLaunchesByRocket(req: Request, res: Response) {
+        try {
+            const result = await LaunchModel.aggregate([
+                {
+                    $lookup: {
+                        from: 'rockets',
+                        localField: 'rocket',
+                        foreignField: '_id',
+                        as: 'rocket'
+                    }
+                },
+                {
+                    $unwind: '$rocket'
+                },
+            ]).sortByCount('rocket')
+
+            const launchsByRocket = result.map(item => {
+                return {
+                    rocket: item._id,
+                    count: item.count,
+                }
+            })
+
+            return res.status(200).json(launchsByRocket)
+        } catch {
+            return res.status(400).json({ 'message': 'Error message' })
+        }
+    }
+
+    async countLaunchesByRocketPerYear(req: Request, res: Response) {
+        try {
+            const result = await LaunchModel.aggregate([
+                {
+                    $lookup: {
+                        from: 'rockets',
+                        localField: 'rocket',
+                        foreignField: '_id',
+                        as: 'rocket'
+                    }
+                },
+                {
+                    $unwind: '$rocket'
+                },
+                {
+                    $group: {
+                        _id: {
+                            year: {
+                                $year: {
+                                    $toDate: '$date'
+                                }
+                            },
+                            rocket: '$rocket',
+                        },
+                        count: {
+                            $sum: 1
+                        }
+                    }
+                },
+                {
+                    $group: {
+                        _id: '$_id.year',
+                        count: { $sum: '$count' },
+                        rockets: {
+                            $push: {
+                                _id: '$_id.rocket',
+                                count: '$count'
+                            }
+                        }
+                    }
+                },
+                {
+                    $sort: {
+                        _id: 1
+                    }
+                },
+            ])
+
+            const launchsByRocketPerYear = result.map(item => {
+                return {
+                    year: item._id,
+                    count: item.count,
+                    rockets: item.rockets.map((rocket: any) => {
+                        return {
+                            _id: rocket._id._id,
+                            name: rocket._id.name,
+                            count: rocket.count
+                        }
+                    })
+                }
+            })
+
+            return res.status(200).json(launchsByRocketPerYear)
+        } catch {
+            return res.status(400).json({ 'message': 'Error message' })
+        }
     }
 }
