@@ -26,7 +26,19 @@
         "parameters": [],
         "responses": {
           "200": {
-            "description": "Message."
+            "description": "Message.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
           }
         }
       }
