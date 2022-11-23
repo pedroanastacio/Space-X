@@ -8,7 +8,7 @@ export const FooterContainer = styled.footer`
   position: absolute;
   bottom: 0;
   width: 100%;
-  height: 3rem;
+  height: 4rem;
 
   span {
     color: ${(props) => props.theme['gray-500']};

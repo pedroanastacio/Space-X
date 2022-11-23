@@ -1,4 +1,4 @@
-import { Home } from '../../pages/Home'
+import { Outlet } from 'react-router-dom'
 import { Footer } from '../../components/Footer'
 
 import { DefaultLayoutContainer } from './styles'
@@ -6,7 +6,7 @@ import { DefaultLayoutContainer } from './styles'
 export function DefaultLayout() {
   return (
     <DefaultLayoutContainer>
-      <Home />
+      <Outlet />
 
       <Footer />
     </DefaultLayoutContainer>

@@ -5,6 +5,6 @@ export const DefaultLayoutContainer = styled.div`
   min-height: 100vh;
 
   > div {
-    padding-bottom: 4rem;
+    padding-bottom: 6rem;
   }
 `

@@ -1,26 +1,56 @@
-import { MagnifyingGlass } from 'phosphor-react'
-import { useState } from 'react'
+import { MagnifyingGlass, X } from 'phosphor-react'
+import { ChangeEvent, useEffect, useState } from 'react'
+import { useSearchParams } from 'react-router-dom'
+import { useDebounce } from '../../../../hooks/useDebounce'
 
 import { SearchBarContainer } from './styles'
 
 export function SearchBar() {
-  const [search, setSearch] = useState('')
+  const [searchParams, setSearchParams] = useSearchParams()
 
-  function handleSubmit() {}
+  const [searchTerm, setSearchTerm] = useState(searchParams.get('search') ?? '')
+
+  const debouncedSearch = useDebounce(searchTerm, 500)
+
+  function handleChange(event: ChangeEvent<HTMLInputElement>) {
+    setSearchTerm(event.target.value)
+  }
+
+  function handleCleanUpSearch() {
+    setSearchTerm('')
+
+    searchParams.delete('search')
+    setSearchParams(searchParams)
+  }
+
+  useEffect(() => {
+    if (debouncedSearch !== '') {
+      searchParams.set('search', debouncedSearch)
+      setSearchParams(searchParams)
+    }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [debouncedSearch])
 
   return (
-    <SearchBarContainer onSubmit={handleSubmit}>
+    <SearchBarContainer>
       <div>
         <MagnifyingGlass size={24} />
+
         <input
           name="search"
           type="text"
-          value={search}
-          onChange={(event) => setSearch(event.target.value)}
+          placeholder="Pesquisar"
+          value={searchTerm}
+          onChange={handleChange}
         />
-      </div>
 
-      <button type="submit">Buscar</button>
+        {searchTerm !== '' && (
+          <button onClick={handleCleanUpSearch}>
+            <X size={20} />
+          </button>
+        )}
+      </div>
     </SearchBarContainer>
   )
 }
