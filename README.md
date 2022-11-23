@@ -31,17 +31,20 @@ lançamentos de foguetes.
   #### 5) Acesse a documentação da API
   - Em seu navegador acesse o endereço: ``http://localhost:3333/docs``
    
-   ### ▶️ Front-end
-   #### 1) Acesse o diretório do front-end
+  ### ▶️ Front-end
+  #### 1) Acesse o diretório do front-end
    - Você pode acessar o diretório com o comando: ``$ cd frontend``
    
-  #### 2) Instale as dependências
+  #### 2) Configure as variáveis de ambiente
+   - Crie o arquivo ``.env.local`` conforme o exemplo disponível em ``.env.local.example``
+   
+  #### 3) Instale as dependências
   - Execute o comando: ``$ npm install``.
 
-  #### 3) Execute o front-end
+  #### 4) Execute o front-end
   - Execute o comando: ``$ npm run dev``.
   
-  #### 4) Acesse o projeto
+  #### 5) Acesse o projeto
   - Em seu navegador acesse o endereço: ``http://localhost:3000``
    
   ## 🛠 Tecnologias
