@@ -5,6 +5,8 @@ export const ScorecardContainer = styled.div`
   display: flex;
   flex-direction: column;
 
+  margin-top: 1rem;
+
   > strong {
     color: ${(props) => props.theme['gray-300']};
     font-size: 0.875rem;

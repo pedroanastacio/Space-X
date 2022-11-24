@@ -7,7 +7,7 @@ export class LaunchController {
         const { limit, search, page } = req.query
 
         const _page = isNaN(Number(page)) ? undefined : Number(page)
-        const _limit = isNaN(Number(limit)) ? undefined : Number(limit)
+        const _limit = isNaN(Number(limit)) ? 5 : Number(limit)
 
         const customLabels = {
             docs: 'results',
@@ -17,7 +17,7 @@ export class LaunchController {
 
         const options = {
             ..._page && { page: _page },
-            ..._limit && { limit: _limit },
+            limit: _limit,
             sort: { flight_number: 1 },
             customLabels
         }

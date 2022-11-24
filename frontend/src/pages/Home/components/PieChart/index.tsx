@@ -7,6 +7,7 @@ import {
   Cell,
 } from 'recharts'
 import { RocketsAndColorsContext } from '../../../../context/RocketsAndColorsContext'
+import { useWindowSize } from '../../../../hooks/useWindowSize'
 import { api } from '../../../../lib/axios'
 
 interface LaunchesPerRocketItem {
@@ -22,6 +23,10 @@ export function PieChart() {
   const { rocketsAndColors, setColorsToRockets } = useContext(
     RocketsAndColorsContext,
   )
+
+  const { width } = useWindowSize()
+
+  const isSmallScreen = width <= 450
 
   useEffect(() => {
     async function fetchLaunchesPerRocket() {
@@ -43,7 +48,7 @@ export function PieChart() {
   }, [launchesPerRocket, setColorsToRockets])
 
   return (
-    <ResponsiveContainer width="100%" maxHeight={200}>
+    <ResponsiveContainer width="100%" height="100%" maxHeight={200}>
       <RPieChart>
         <Pie
           data={launchesPerRocket}
@@ -66,8 +71,8 @@ export function PieChart() {
           ))}
         </Pie>
         <Legend
-          layout="vertical"
-          verticalAlign="middle"
+          layout={isSmallScreen ? 'horizontal' : 'vertical'}
+          verticalAlign={isSmallScreen ? 'bottom' : 'middle'}
           align="left"
           wrapperStyle={{ fontSize: '0.875rem' }}
         />

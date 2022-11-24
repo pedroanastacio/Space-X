@@ -44,6 +44,14 @@ export const Stats = styled.section`
       margin-bottom: 1rem;
     }
   }
+
+  @media only screen and (max-width: 900px) {
+    column-gap: 1rem;
+  }
+
+  @media only screen and (max-width: 850px) {
+    grid-template-columns: 1fr;
+  }
 `
 
 export const LaunchesRecords = styled.section`

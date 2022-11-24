@@ -32,7 +32,7 @@ export function BarChart() {
   }, [])
 
   return (
-    <ResponsiveContainer width="100%" height="80%">
+    <ResponsiveContainer width="100%" height="80%" minHeight={300}>
       <RBarChart data={launchesPerYear}>
         <XAxis dataKey="year" />
         <YAxis />
