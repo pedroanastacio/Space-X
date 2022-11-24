@@ -12,7 +12,9 @@ export const HomeContainer = styled.div`
     gap: 1rem;
 
     color: ${(props) => props.theme.white};
+    font-family: 'Orbitron', sans-serif;
     font-weight: 600;
+    font-size: 2.2rem;
     text-align: center;
 
     img {
@@ -21,13 +23,17 @@ export const HomeContainer = styled.div`
       height: auto;
     }
   }
+
+  @media only screen and (max-width: 450px) {
+    padding: 3rem 1rem;
+  }
 `
 
 export const Stats = styled.section`
   display: grid;
   grid-template-columns: 1fr 1fr;
   column-gap: 2rem;
-  row-gap: 2rem;
+  row-gap: 1rem;
 
   margin-top: 3rem;
 
@@ -61,5 +67,25 @@ export const LaunchesRecords = styled.section`
     text-align: center;
     font-weight: 600;
     font-size: 1.2rem;
+  }
+`
+
+export const EmptyMessage = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+
+  margin-top: 4rem;
+
+  svg {
+    color: ${(props) => props.theme['gray-500']};
+  }
+
+  span {
+    text-align: center;
+    color: ${(props) => props.theme['gray-500']};
+    font-size: 0.875rem;
   }
 `
