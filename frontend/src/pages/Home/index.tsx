@@ -15,37 +15,30 @@ import { api } from '../../lib/axios'
 
 import { HomeContainer, Stats, LaunchesRecords, EmptyMessage } from './styles'
 
-interface PaginateParams {
-  currentPage: number
-  totalDocs: number
-  docsPerPage: number
-  totalPages: number
-  hasNext: boolean
-  hasPrev: boolean
-}
-
 export function Home() {
-  const [launches, setLaunches] = useState<Launch[]>([])
-  const [paginateParams, setPaginateParams] = useState<PaginateParams>(
-    {} as PaginateParams,
-  )
-  const [fetchingLaunches, setFetchingLaunches] = useState(true)
-
   const [searchParams, setSearchParams] = useSearchParams()
+
+  const [launches, setLaunches] = useState<Launch[]>([])
+  const [fetchingLaunches, setFetchingLaunches] = useState(true)
+  const [currentPage, setCurrentPage] = useState(
+    searchParams.get('page') ? Number(searchParams.get('page')) : 1,
+  )
+  const [totalPages, setTotalPages] = useState(0)
 
   const { width } = useWindowSize()
 
   const isSmallScreen = width <= 800
 
   function paginate({ selected }: { selected: number }) {
-    setPaginateParams((state) => ({ ...state, currentPage: selected + 1 }))
+    setCurrentPage(selected + 1)
   }
 
   useEffect(() => {
-    searchParams.set('page', String(paginateParams.currentPage ?? 1))
+    const prevPage = searchParams.get('page')
+    searchParams.set('page', String(currentPage ?? prevPage ?? 1))
     setSearchParams(searchParams)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [paginateParams])
+  }, [currentPage])
 
   useEffect(() => {
     async function fetchLaunches() {
@@ -62,17 +55,8 @@ export function Home() {
         }),
       )
 
-      const limit = Number(searchParams.get('limit'))
-      const docsPerPage = isNaN(limit) ? 5 : limit > 0 ? limit : 5
-
-      setPaginateParams({
-        currentPage: response.data.page,
-        totalDocs: response.data.totalDocs,
-        docsPerPage,
-        totalPages: response.data.totalPages,
-        hasNext: response.data.hasNext,
-        hasPrev: response.data.hasPrev,
-      })
+      setCurrentPage(response.data.page)
+      setTotalPages(response.data.totalPages)
 
       setFetchingLaunches(false)
     }
@@ -123,7 +107,11 @@ export function Home() {
               <LaunchesTable launches={launches} />
             )}
 
-            <Paginate params={paginateParams} paginate={paginate} />
+            <Paginate
+              totalPages={totalPages}
+              currentPage={currentPage}
+              paginate={paginate}
+            />
           </>
         )}
       </LaunchesRecords>

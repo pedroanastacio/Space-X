@@ -4,25 +4,22 @@ import { CaretLeft, CaretRight } from 'phosphor-react'
 import { PaginateContainer } from './styles'
 
 interface PaginateProps {
-  params: {
-    currentPage: number
-    totalDocs: number
-    docsPerPage: number
-    totalPages: number
-    hasNext: boolean
-    hasPrev: boolean
-  }
-
+  totalPages: number
+  currentPage: number
   paginate: ({ selected }: { selected: number }) => void
 }
 
-export function Paginate({ params, paginate }: PaginateProps) {
+export function Paginate({ totalPages, currentPage, paginate }: PaginateProps) {
+  const forcePage = totalPages > 0 ? currentPage - 1 : -1
+
   return (
     <PaginateContainer>
       <ReactPaginate
         onPageChange={paginate}
-        pageCount={params.totalPages ?? 0}
+        pageCount={totalPages}
+        forcePage={forcePage}
         pageRangeDisplayed={1}
+        marginPagesDisplayed={2}
         previousLabel={<CaretLeft size={16} weight="bold" />}
         nextLabel={<CaretRight size={16} weight="bold" />}
         containerClassName={'pagination'}

@@ -20,12 +20,14 @@ export function SearchBar() {
     setSearchTerm('')
 
     searchParams.delete('search')
+    searchParams.set('page', '1')
     setSearchParams(searchParams)
   }
 
   useEffect(() => {
     if (debouncedSearch !== '') {
       searchParams.set('search', debouncedSearch)
+      searchParams.set('page', '1')
       setSearchParams(searchParams)
     }
 
