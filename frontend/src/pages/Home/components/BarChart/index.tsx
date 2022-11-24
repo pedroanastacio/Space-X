@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from 'react'
+import { useContext } from 'react'
 import {
   BarChart as RBarChart,
   ResponsiveContainer,
@@ -8,32 +8,20 @@ import {
   YAxis,
 } from 'recharts'
 import { RocketsAndColorsContext } from '../../../../context/RocketsAndColorsContext'
-import { api } from '../../../../lib/axios'
 
-interface LaunchesPerYearItem {
-  year: number
-  [key: string]: number
+interface BarChartProps {
+  data: {
+    year: number
+    [key: string]: number
+  }[]
 }
 
-interface LaunchesPerYear extends Array<LaunchesPerYearItem> {}
-
-export function BarChart() {
-  const [launchesPerYear, setLaunchesPerYear] = useState<LaunchesPerYear[]>([])
-
+export function BarChart({ data }: BarChartProps) {
   const { rocketsAndColors } = useContext(RocketsAndColorsContext)
-
-  useEffect(() => {
-    async function fetchLaunchesPerYearStats() {
-      const response = await api.get('/launches/stats-per-year')
-      setLaunchesPerYear(response.data.results)
-    }
-
-    fetchLaunchesPerYearStats()
-  }, [])
 
   return (
     <ResponsiveContainer width="100%" height="80%" minHeight={280}>
-      <RBarChart data={launchesPerYear}>
+      <RBarChart data={data}>
         <XAxis dataKey="year" />
         <YAxis />
         <Tooltip />

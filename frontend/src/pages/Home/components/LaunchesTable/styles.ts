@@ -2,6 +2,7 @@
 import styled from 'styled-components'
 
 export const LaunchesTableContainer = styled.main`
+  position: relative;
   background: ${(props) => props.theme['gray-700']};
   border-radius: 8px;
   overflow: hidden;

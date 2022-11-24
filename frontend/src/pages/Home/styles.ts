@@ -60,6 +60,12 @@ export const Stats = styled.section`
   }
 `
 
+export const LoaderContainer = styled.div`
+  position: relative;
+  width: 100%;
+  min-height: 350px;
+`
+
 export const LaunchesRecords = styled.section`
   margin-top: 4rem;
 

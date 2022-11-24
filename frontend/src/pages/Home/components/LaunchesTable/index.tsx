@@ -1,14 +1,16 @@
 import { YoutubeLogo, VideoCameraSlash } from 'phosphor-react'
 import { Badge } from '../../../../components/Badge'
+import { Loader } from '../../../../components/Loader'
 import { Launch } from '../../../../interfaces/Launch'
 
 import { LaunchesTableContainer, LaunchesTableRow } from './styles'
 
 interface LaunchesTableProps {
   launches: Launch[]
+  loading: boolean
 }
 
-export function LaunchesTable({ launches }: LaunchesTableProps) {
+export function LaunchesTable({ launches, loading }: LaunchesTableProps) {
   return (
     <LaunchesTableContainer>
       <table>
@@ -53,6 +55,8 @@ export function LaunchesTable({ launches }: LaunchesTableProps) {
           ))}
         </tbody>
       </table>
+
+      {loading && <Loader />}
     </LaunchesTableContainer>
   )
 }

@@ -1,8 +1,7 @@
-import { useEffect, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { RocketLaunch } from 'phosphor-react'
 import { SearchBar } from './components/SearchBar'
-import { RocketsAndColorsContextProvider } from '../../context/RocketsAndColorsContext'
 import { BarChart } from './components/BarChart'
 import { PieChart } from './components/PieChart'
 import { ScoreCard } from './components/Scorecard'
@@ -13,11 +12,33 @@ import { Launch } from '../../interfaces/Launch'
 import { useWindowSize } from '../../hooks/useWindowSize'
 import { api } from '../../lib/axios'
 
-import { HomeContainer, Stats, LaunchesRecords, EmptyMessage } from './styles'
+import {
+  HomeContainer,
+  Stats,
+  LaunchesRecords,
+  EmptyMessage,
+  LoaderContainer,
+} from './styles'
+import { RocketsAndColorsContext } from '../../context/RocketsAndColorsContext'
+import { Loader } from '../../components/Loader'
+
+interface LaunchesPerRocket {
+  rocket: string
+  count: number
+}
+
+interface LaunchesPerYear {
+  year: number
+  [key: string]: number
+}
 
 export function Home() {
   const [searchParams, setSearchParams] = useSearchParams()
 
+  const [launchesPerRocket, setLaunchesPerRocket] = useState<
+    LaunchesPerRocket[]
+  >([])
+  const [launchesPerYear, setLaunchesPerYear] = useState<LaunchesPerYear[]>([])
   const [launches, setLaunches] = useState<Launch[]>([])
   const [fetchingLaunches, setFetchingLaunches] = useState(true)
   const [currentPage, setCurrentPage] = useState(
@@ -25,13 +46,48 @@ export function Home() {
   )
   const [totalPages, setTotalPages] = useState(0)
 
+  const { rocketsAndColors, setColorsToRockets } = useContext(
+    RocketsAndColorsContext,
+  )
+
   const { width } = useWindowSize()
+
+  const hasLaunches = launches.length > 0
+  const hasRocketsAndColors = rocketsAndColors.length > 0
 
   const isSmallScreen = width <= 800
 
   function paginate({ selected }: { selected: number }) {
     setCurrentPage(selected + 1)
   }
+
+  useEffect(() => {
+    async function fetchLaunchesPerRocket() {
+      const response = await api.get('/launches/stats-per-rocket')
+      setLaunchesPerRocket(response.data.results)
+    }
+
+    fetchLaunchesPerRocket()
+  }, [])
+
+  useEffect(() => {
+    const rockets = [
+      ...new Set(
+        launchesPerRocket.map((item: LaunchesPerRocket) => item.rocket),
+      ),
+    ]
+
+    setColorsToRockets(rockets)
+  }, [launchesPerRocket, setColorsToRockets])
+
+  useEffect(() => {
+    async function fetchLaunchesPerYearStats() {
+      const response = await api.get('/launches/stats-per-year')
+      setLaunchesPerYear(response.data.results)
+    }
+
+    fetchLaunchesPerYearStats()
+  }, [])
 
   useEffect(() => {
     const prevPage = searchParams.get('page')
@@ -42,6 +98,8 @@ export function Home() {
 
   useEffect(() => {
     async function fetchLaunches() {
+      setFetchingLaunches(true)
+
       const response = await api.get('/launches', {
         params: searchParams,
       })
@@ -71,12 +129,12 @@ export function Home() {
         Space X
       </h1>
 
-      <RocketsAndColorsContextProvider>
+      {hasRocketsAndColors ? (
         <Stats>
           <div>
             <h3>Lançamentos de foguetes</h3>
 
-            <PieChart />
+            <PieChart data={launchesPerRocket} />
 
             <ScoreCard />
           </div>
@@ -84,17 +142,20 @@ export function Home() {
           <div>
             <h3>Lançamentos por ano</h3>
 
-            <BarChart />
+            <BarChart data={launchesPerYear} />
           </div>
         </Stats>
-      </RocketsAndColorsContextProvider>
-
+      ) : (
+        <LoaderContainer>
+          <Loader showLayer={false} />
+        </LoaderContainer>
+      )}
       <LaunchesRecords>
         <h2>Registros de lançamentos</h2>
 
         <SearchBar />
 
-        {launches.length === 0 && !fetchingLaunches ? (
+        {!hasLaunches && !fetchingLaunches ? (
           <EmptyMessage>
             <RocketLaunch size={32} weight="fill" />
             <span>Nenhum lançamento encontrado</span>
@@ -102,16 +163,18 @@ export function Home() {
         ) : (
           <>
             {isSmallScreen ? (
-              <LaunchesList launches={launches} />
+              <LaunchesList launches={launches} loading={fetchingLaunches} />
             ) : (
-              <LaunchesTable launches={launches} />
+              <LaunchesTable launches={launches} loading={fetchingLaunches} />
             )}
 
-            <Paginate
-              totalPages={totalPages}
-              currentPage={currentPage}
-              paginate={paginate}
-            />
+            {hasLaunches && (
+              <Paginate
+                totalPages={totalPages}
+                currentPage={currentPage}
+                paginate={paginate}
+              />
+            )}
           </>
         )}
       </LaunchesRecords>

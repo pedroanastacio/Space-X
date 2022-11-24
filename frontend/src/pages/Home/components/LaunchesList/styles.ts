@@ -1,11 +1,16 @@
 import styled from 'styled-components'
 
-export const LaunchesListContainer = styled.ul`
-  width: 100%;
-  list-style-type: none;
+export const LaunchesListContainer = styled.main`
+  position: relative;
+  margin-top: 2rem;
+  min-height: 60px;
   border-radius: 8px;
   overflow: hidden;
-  margin-top: 2rem;
+
+  ul {
+    width: 100%;
+    list-style-type: none;
+  }
 `
 
 interface LaunchesListItemProps {
@@ -44,4 +49,8 @@ export const LaunchesListItem = styled.li<LaunchesListItemProps>`
       }
     }
   }
+`
+
+export const Spacer = styled.div`
+  height: 2rem;
 `
