@@ -1,11 +1,11 @@
 <h1 align=center>Fullstack Challenge 🏅 Space X API</h1>
 
 ## 💻 Projeto:
-Este projeto foi desenvolvido como solução do desafio Fullstack Challenge 🏅 Space X API feito pela [Coodesh](https://coodesh.com/).
+Este projeto foi desenvolvido como solução do desafio Fullstack Challenge 🏅 Space X API proposto pela [Coodesh](https://coodesh.com/).
 O projeto conta com uma REST API alimentada por dados da API Space X-API. Além disso, foi implementado um website que consome a REST API desenvolvida a fim de exibir dados relativos a 
 lançamentos de foguetes.
 
-> [Apresentação do projeto]()
+> [Apresentação do projeto](https://www.loom.com/embed/c8b0db08743843a8b83ca546c37f7b86)
    
 ## 🚀 Como executar a aplicação
 
